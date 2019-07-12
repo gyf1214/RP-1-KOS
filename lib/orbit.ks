@@ -13,11 +13,16 @@ function finalStage {
     set ship:control:mainthrottle to 0.
     rcs on.
     lock steering to "kill".
-    wait rcsKillTime.
 
+    if ETA:periapsis > ETA:apoapsis and ETA:apoapsis > rcsTime + rcsKillTime + finalTime / 2.0 {
+        wait rcsKillTime.
+        print "rcs off".
+        rcs off.
+    }
 
     wait until ETA:apoapsis <= rcsTime + finalTime / 2.0 or ETA:periapsis < ETA:apoapsis.
     print "rcs propel".
+    rcs on.
     set ship:control:fore to 1.0.
     set ship:control:mainthrottle to 1.
     wait rcsTime.
