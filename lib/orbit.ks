@@ -5,6 +5,7 @@ loadModule("launchOneStage.ks").
 function finalStage {
     parameter finalTime is 0.0.
     parameter rcsTime is 2.5.
+    parameter rcsKillTime is 5.
 
     print "deploy final stage".
     stage.
@@ -12,6 +13,8 @@ function finalStage {
     set ship:control:mainthrottle to 0.
     rcs on.
     lock steering to "kill".
+    wait rcsKillTime.
+
 
     wait until ETA:apoapsis <= rcsTime + finalTime / 2.0 or ETA:periapsis < ETA:apoapsis.
     print "rcs propel".
@@ -53,42 +56,4 @@ function deployFairing {
     lock steering to dirZZ(ship:facing, ship:prograde:forevector).
 }
 
-function orbitThreeStages {
-    parameter offset is 0.0.
-    parameter finalTime is 0.0.
-    parameter turnStart is 60.0.
-    parameter minAP is 140000.
-    parameter azimuth is 90.0.
-    parameter separateTime is 0.7.
-
-    doLaunchOneStage(offset, turnStart, azimuth).
-
-    wait until ship:maxThrust = 0.
-    print "deploy second stage".
-    stage.
-    wait separateTime.
-    print "ignite engine".
-    stage.
-
-    wait until ship:altitude > 70000.
-    deployFairing().
-
-    doFinalStage(finalTime, minAP).
-}
-
-function orbitTwoStages {
-    parameter offset is 0.0.
-    parameter finalTime is 0.0.
-    parameter turnStart is 60.0.
-    parameter minAP is 140000.
-    parameter azimuth is 90.0.
-
-    when ship:altitude > 70000 then {
-        deployFairing().
-    }
-
-    doLaunchOneStage(offset, turnStart, azimuth).
-    doFinalStage(finalTime, minAP).
-}
-
-print "orbit v0.1.5 loaded".
+print "orbit v0.2.0 loaded".
