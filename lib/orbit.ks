@@ -14,7 +14,7 @@ function finalStage {
     rcs on.
     lock steering to "kill".
 
-    if ETA:periapsis > ETA:apoapsis and ETA:apoapsis > rcsTime + rcsKillTime + finalTime / 2.0 {
+    if ETA:apoapsis > rcsTime + finalTime / 2.0 + rcsKillTime {
         wait rcsKillTime.
         print "rcs off".
         rcs off.
@@ -61,4 +61,4 @@ function deployFairing {
     lock steering to dirZZ(ship:facing, ship:prograde:forevector).
 }
 
-print "orbit v0.2.0 loaded".
+print "orbit v0.2.2 loaded".

@@ -2,8 +2,8 @@
 
 function openTerminal {
     core:doevent("Open Terminal").
-    set terminal:height to 24.
-    set terminal:width to 36.
+    set terminal:height to 48.
+    set terminal:width to 42.
     set terminal:brightness to 0.8.
     set terminal:charheight to 14.
 }
