@@ -2,6 +2,36 @@
 
 loadModule("launchOneStage.ks").
 
+function warpWait {
+    parameter waitTime is 0.
+    parameter graceTime is 5.
+    
+    print "warp wait: " + waitTime + "s".
+    local now is time:seconds.
+    if waitTime > graceTime {
+        kuniverse:timewarp:warpto(time:seconds + waitTime - graceTime).
+    }
+    local waitTime is now + waitTime - time:seconds.
+    print "warp finished, wait: " + waitTime.
+    wait waitTime.
+}
+
+function stageFinalStage {
+    parameter rcsTime is 2.5.
+    
+    print "rcs propel".
+    rcs on.
+    set ship:control:fore to 1.0.
+    set ship:control:mainthrottle to 1.
+    wait rcsTime.
+
+    print "ignite engine".
+    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
+    stage.
+    set ship:control:fore to 0.0.
+    rcs off.
+}
+
 function finalStage {
     parameter finalTime is 0.0.
     parameter rcsTime is 2.5.
@@ -20,18 +50,11 @@ function finalStage {
         rcs off.
     }
 
-    wait until ETA:apoapsis <= rcsTime + finalTime / 2.0 or ETA:periapsis < ETA:apoapsis.
-    print "rcs propel".
-    rcs on.
-    set ship:control:fore to 1.0.
-    set ship:control:mainthrottle to 1.
-    wait rcsTime.
+    if ETA:periapsis > ETA:apoapsis {
+        warpWait(ETA:apoapsis - rcsTime - finalTime / 2.0).
+    }
 
-    print "ignite engine".
-    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
-    stage.
-    set ship:control:fore to 0.0.
-    rcs off.
+    stageFinalStage(rcsTime).
 }
 
 function waitForOrbit {
@@ -45,6 +68,11 @@ function waitForOrbit {
     }
 }
 
+function waitForSubOrbit {
+    parameter minAP is 140000.
+    wait until ship:obt:apoapsis > minAP or ship:maxthrust = 0.
+}
+
 function doFinalStage {
     parameter finalTime is 0.0.
     parameter minAP is 140000.
@@ -55,10 +83,23 @@ function doFinalStage {
     MECO().
 }
 
+function doFinalStageSub {
+    parameter minAP is 140000.
+
+    wait until ship:maxthrust = 0.
+    print "deploy final stage".
+    stage.
+    lock steering to "kill".
+
+    stageFinalStage().
+    waitForSubOrbit(minAP).
+    MECO().
+}
+
 function deployFairing {
     print "deploy fairing".
     stage.
     lock steering to dirZZ(ship:facing, ship:prograde:forevector).
 }
 
-print "orbit v0.2.2 loaded".
+print "orbit v0.3.0 loaded".

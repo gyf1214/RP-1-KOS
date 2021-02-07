@@ -1,6 +1,7 @@
 @lazyGlobal off.
 
-loadModule("orbit.ks").
+loadModule("booster.ks").
+loadModule("orbitTwoStages.ks").
 
 function orbitTwoHalf {
     parameter offset is 0.0.
@@ -9,21 +10,8 @@ function orbitTwoHalf {
     parameter minAP is 140000.
     parameter azimuth is 90.0.
 
-    doLaunchOneStage(offset, turnStart, azimuth).
-
-    local booster is ship:partsTagged("booster")[0].
-    when booster:maxThrust = 0 then {
-        print "booster flame out".
-        wait 1.5.
-        print "decouple booster".
-        stage.
-    }
-
-    when ship:altitude > 70000 then {
-        deployFairing().
-    }
-
-    doFinalStage(finalTime, minAP).
+    addBoosterTag().
+    orbitTwoStages(offset, finalTime, turnStart, minAP, azimuth).
 }
 
-print "orbitTwoHalf v0.1.0 loaded".
+print "orbitTwoHalf v0.2.0 loaded".
