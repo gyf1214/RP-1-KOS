@@ -1,6 +1,6 @@
 @lazyGlobal off.
 
-print "GTO Sub Orbit Profile for LV II Series".
+print "GTO Orbit Profile for LV II Series".
 loadModule("booster.ks").
 loadModule("orbitTwoStages.ks").
 
