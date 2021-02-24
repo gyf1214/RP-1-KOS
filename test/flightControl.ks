@@ -52,10 +52,10 @@ rcs on.
 lock steering to dirZZ(ship:facing, ship:prograde:forevector).
 wait 15.
 print "2".
-set ship:control:mainthrottle to 1.0.
+set ship:control:pilotmainthrottle to 1.0.
 set ship:control:fore to 1.0.
 wait dt.
 print "3".
-set ship:control:mainthrottle to 0.0.
+set ship:control:pilotmainthrottle to 0.0.
 set ship:control:fore to 0.0.
 unlock steering.

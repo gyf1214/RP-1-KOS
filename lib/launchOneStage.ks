@@ -8,7 +8,7 @@ function doLaunchOneStage {
     parameter azimuth is 90.0.
 
     print "launch for direction: " + azimuth.
-    set ship:control:mainthrottle to 1.0.
+    set ship:control:pilotmainthrottle to 1.0.
     local lock yy to ship:up:forevector.
     local lock zz to ship:north:forevector.
     local lock vv to ship:srfprograde:forevector.
@@ -26,7 +26,7 @@ function doLaunchOneStage {
 }
 
 function MECO {
-    set ship:control:mainthrottle to 0.
+    set ship:control:pilotmainthrottle to 0.
     unlock steering.
     print "MECO".
     wait 1.0.

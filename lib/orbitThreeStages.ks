@@ -2,11 +2,9 @@
 
 loadModule("orbit.ks").
 
-function orbitThreeStages {
+function doOrbitThreeStages {
     parameter offset is 0.0.
-    parameter finalTime is 0.0.
     parameter turnStart is 60.0.
-    parameter minAP is 140000.
     parameter azimuth is 90.0.
     parameter separateTime is 0.7.
 
@@ -21,7 +19,17 @@ function orbitThreeStages {
 
     wait until ship:altitude > 70000.
     deployFairing().
+}
 
+function orbitThreeStages {
+    parameter offset is 0.0.
+    parameter finalTime is 0.0.
+    parameter turnStart is 60.0.
+    parameter minAP is 140000.
+    parameter azimuth is 90.0.
+    parameter separateTime is 0.7.
+
+    doOrbitThreeStages(offset, turnStart, azimuth, separateTime).
     doFinalStage(finalTime, minAP).
 }
 

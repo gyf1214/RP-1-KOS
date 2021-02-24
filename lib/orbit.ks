@@ -22,7 +22,7 @@ function stageFinalStage {
     print "rcs propel".
     rcs on.
     set ship:control:fore to 1.0.
-    set ship:control:mainthrottle to 1.
+    set ship:control:pilotmainthrottle to 1.
     wait rcsTime.
 
     print "ignite engine".
@@ -40,7 +40,7 @@ function finalStage {
     print "deploy final stage".
     stage.
 
-    set ship:control:mainthrottle to 0.
+    set ship:control:pilotmainthrottle to 0.
     rcs on.
     lock steering to "kill".
 
