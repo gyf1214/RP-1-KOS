@@ -1,6 +1,6 @@
 @lazyGlobal off.
 
-print "TinyVee Random General Profile".
+logPrint("TinyVee Random General Profile").
 loadModule("launchOneStage.ks").
 
 local azimuth is 360 * random().

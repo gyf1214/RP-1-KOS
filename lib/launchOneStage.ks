@@ -7,29 +7,35 @@ function doLaunchOneStage {
     parameter turnStart is 60.0.
     parameter azimuth is 90.0.
 
-    print "launch for direction: " + azimuth.
+    logPrint("launch for direction: " + azimuth).
     set ship:control:pilotmainthrottle to 1.0.
     local lock yy to ship:up:forevector.
     local lock zz to ship:north:forevector.
     local lock vv to ship:srfprograde:forevector.
     lock steering to dirZZ(ship:facing, yy).
     wait 1.
-    print "ignite engine".
+    logPrint("ignite engine").
     stage.
     wait 3.
     stage.
-    print "lift off".
+    logPrint("lift off").
 
     wait until ship:airspeed > turnStart.
-    print "gravity turn with offset: " + offset.
+    logPrint("gravity turn with offset: " + offset).
     lock steering to dirZZ(ship:facing, pitchOffset(yy, zz, vv, azimuth, offset)).
 }
 
 function MECO {
     set ship:control:pilotmainthrottle to 0.
     unlock steering.
-    print "MECO".
+    logPrint("MECO").
     wait 1.0.
+}
+
+function deployFairing {
+    logPrint("deploy fairing").
+    stage.
+    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
 }
 
 function launchOneStage {
@@ -43,4 +49,4 @@ function launchOneStage {
     MECO().
 }
 
-print "launchOneStage v0.1.2 loaded".
+logPrint("launchOneStage v0.1.3 loaded").

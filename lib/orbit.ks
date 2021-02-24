@@ -1,105 +1,75 @@
 @lazyGlobal off.
 
 loadModule("launchOneStage.ks").
+loadModule("maneuver.ks").
 
-function warpWait {
-    parameter waitTime is 0.
-    parameter graceTime is 5.
-    
-    print "warp wait: " + waitTime + "s".
-    local now is time:seconds.
-    if waitTime > graceTime {
-        kuniverse:timewarp:warpto(time:seconds + waitTime - graceTime).
-    }
-    local waitTime is now + waitTime - time:seconds.
-    print "warp finished, wait: " + waitTime.
-    wait waitTime.
-}
+function doLaunchNStages {
+    parameter N is 2.
+    parameter offset is 0.0.
+    parameter turnStart is 60.0.
+    parameter azimuth is 90.0.
+    parameter sepTime is 0.6.
+    parameter fairingHeight is 70000.
 
-function stageFinalStage {
-    parameter rcsTime is 2.5.
-    
-    print "rcs propel".
-    rcs on.
-    set ship:control:fore to 1.0.
-    set ship:control:pilotmainthrottle to 1.
-    wait rcsTime.
+    doLaunchOneStage(offset, turnStart, azimuth).
 
-    print "ignite engine".
-    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
-    stage.
-    set ship:control:fore to 0.0.
-    rcs off.
-}
-
-function finalStage {
-    parameter finalTime is 0.0.
-    parameter rcsTime is 2.5.
-    parameter rcsKillTime is 5.
-
-    print "deploy final stage".
-    stage.
-
-    set ship:control:pilotmainthrottle to 0.
-    rcs on.
-    lock steering to "kill".
-
-    if ETA:apoapsis > rcsTime + finalTime / 2.0 + rcsKillTime {
-        wait rcsKillTime.
-        print "rcs off".
-        rcs off.
+    when ship:altitude > fairingHeight then {
+        deployFairing().
     }
 
-    if ETA:periapsis > ETA:apoapsis {
-        warpWait(ETA:apoapsis - rcsTime - finalTime / 2.0).
-    }
-
-    stageFinalStage(rcsTime).
-}
-
-function waitForOrbit {
-    parameter minAP is 140000.
-    parameter minPE is 140000.
-
-    if ship:obt:apoapsis > minAP {
-        wait until ship:obt:periapsis > minAP or ship:maxthrust = 0.
-    } else {
-        wait until (ship:obt:apoapsis > minAP and ship:obt:periapsis > minPE) or ship:maxthrust = 0.
+    from { local i is 1. } until i >= N step { set i to i + 1. } do {
+        wait until ship:maxThrust = 0.
+        logPrint("separate stage " + i).
+        stage.
+        wait sepTime.
+        logPrint("ignite engine").
+        stage.
+        // this is to prevent ship:maxThrust is zero instantly
+        wait sepTime.
     }
 }
 
-function waitForSubOrbit {
-    parameter minAP is 140000.
-    wait until ship:obt:apoapsis > minAP or ship:maxthrust = 0.
-}
-
-function doFinalStage {
-    parameter finalTime is 0.0.
-    parameter minAP is 140000.
-
-    wait until ship:maxthrust = 0.
-    finalStage(finalTime).
-    waitForOrbit(minAP).
+function deployPayload {
     MECO().
-}
-
-function doFinalStageSub {
-    parameter minAP is 140000.
-
-    wait until ship:maxthrust = 0.
-    print "deploy final stage".
+    logPrint("deploy payload").
     stage.
-    lock steering to "kill".
-
-    stageFinalStage().
-    waitForSubOrbit(minAP).
-    MECO().
+    reportOrbit().
 }
 
-function deployFairing {
-    print "deploy fairing".
-    stage.
-    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
+function finalNStages {
+    parameter burntimes is list().
+    parameter sepTime is 0.6.
+
+    logPrint("lock to maneuver direction").
+    set ship:control:pilotmainthrottle to 0.0.
+    rcs on.
+    lock steering to orbitVelAtTA(180):normalized.
+
+    local finalTime is 0.
+    for t in burntimes {
+        set finalTime to finalTime + sepTime + t.
+    }
+    local N is burntimes:length.
+
+    logPrint("final " + N + " stages, total time " + finalTime).
+    local waitTime is ETA:apoapsis - finalTime / 2.
+
+    logPrint("wait until burn time, ETA " + waitTime).
+    if waitTime > 0 {
+        wait waitTime.
+    }
+
+    from { local i is 0. } until i >= N step { set i to i + 1. } do {
+        logPrint("deploy final stage " + (i + 1)).
+        stage.
+        set ship:control:pilotmainthrottle to 1.0.
+        wait sepTime.
+        logPrint("ignite engine").
+        stage.
+        wait sepTime.
+        wait until ship:maxthrust = 0.
+    }
+    deployPayload().
 }
 
-print "orbit v0.3.0 loaded".
+logPrint("orbit v0.3.0 loaded").

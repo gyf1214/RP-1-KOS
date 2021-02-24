@@ -8,16 +8,48 @@ function openTerminal {
     set terminal:charheight to 14.
 }
 
-function loadModule {
+function loadFile {
     parameter path.
-
-    copyPath("0:/lib/" + path, path).
+    copyPath("Archive:/" + path, path).
     runOncePath(path).
-    // deletePath(path).
 }
 
-wait 5.
-openTerminal().
+function loadModule {
+    parameter path.
+    loadFile("lib/" + path).
+}
 
+function bootPlan {
+    logPrint("plan system v0.1.2 loaded").
+    logPrint("current plan: " + core:tag).
+    logPrint("executing...").
+    
+    loadFile("plan/" + core:tag + ".ks").
+    
+    logPrint("system shutdown").
+    copyLog().
+    shutdown.
+}
+
+function bootLauncher {
+    loadModule("launcher.ks").
+    loadLauncher(core:tag).
+
+    executeLauncher().
+
+    logPrint("system shutdown").
+    shutdown.
+}
+
+wait until ship:unpacked.
 clearScreen.
-print "bootstrap v0.1.2 loaded".
+
+global root is ship:rootpart:getmodule("kOSProcessor").
+set root:volume:name to "root".
+
+function getRoot {
+    return root.
+}
+
+loadModule("log.ks").
+logPrint("bootstrap v0.2.1 loaded").

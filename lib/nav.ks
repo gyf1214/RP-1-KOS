@@ -22,4 +22,4 @@ function pitchOffset {
     return angleAxis(pitch + offset, axis) * y.
 }
 
-print "nav v0.1.1 loaded".
+logPrint("nav v0.1.2 loaded").

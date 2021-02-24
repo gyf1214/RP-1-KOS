@@ -52,4 +52,4 @@ function orbitVelAtTA {
     return vel * dir.
 }
 
-print "maneuver v0.1.0 loaded".
+logPrint("maneuver v0.1.0 loaded").

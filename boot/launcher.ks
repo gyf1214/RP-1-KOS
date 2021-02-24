@@ -5,7 +5,7 @@ function main {
     copyPath("Archive:/" + path, path).
     runOncePath(path).
     
-    bootPlan().
+    bootLauncher().
 }
 
 if ship:status = "PRELAUNCH" {
