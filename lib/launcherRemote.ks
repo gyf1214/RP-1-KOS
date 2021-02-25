@@ -1,7 +1,12 @@
 @lazyGlobal off.
 
 function callLauncher {
+    parameter config is "".
     parameter param is lexicon().
+
+    if config:length > 0 {
+        param:add("config", config).
+    }
 
     logPrint("wait for launcher ready").
     wait until not core:messages:empty.

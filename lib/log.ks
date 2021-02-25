@@ -36,12 +36,16 @@ function reportOrbit {
 }
 
 function copyLog {
+    local targetPath is "Archive:/log/sim".
     if kuniverse:canquicksave {
         // this is actual launch
-        copyPath("root:/log", "Archive:/log/" + logName).
-    } else {
-        copyPath("root:/log", "Archive:/log/sim").
+        set targetPath to "Archive:/log/" + logName.
     }
+    
+    if exists(targetPath) {
+        deletePath(targetPath).
+    }
+    copyPath("root:/log", targetPath).
 }
 
 logPrint("log v0.1.0 loaded").

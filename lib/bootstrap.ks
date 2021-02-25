@@ -41,6 +41,16 @@ function bootLauncher {
     shutdown.
 }
 
+function bootMissionPlan {
+    loadModule("missionPlan.ks").
+    loadFile("plan/" + core:tag + ".ks").
+    doExecutePlan(ship:name).
+    
+    logPrint("system shutdown").
+    copyLog().
+    shutdown.
+}
+
 wait until ship:unpacked.
 clearScreen.
 

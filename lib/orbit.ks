@@ -33,6 +33,7 @@ function deployPayload {
     MECO().
     logPrint("deploy payload").
     stage.
+    wait 1.
     reportOrbit().
 }
 

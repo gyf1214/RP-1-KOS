@@ -1,6 +1,6 @@
 @lazyGlobal off.
 
-global launcher is lexicon().
+loadModule("missionPlan.ks").
 
 // a = a + b, non-overwrite, deep
 function combineLexicon {
@@ -20,19 +20,17 @@ function initLauncher {
     parameter param is lexicon().
     
     logPrint("init launcher " + name).
-    launcher:add("name", name).
-    launcher:add("func", func).
-    launcher:add("param", param).
+    initPlan(name).
+    plan:add("func", func).
+    plan:add("param", param).
 
     local psSrc is "Archive:/launcher/" + name + ".ps.ks".
     if exists(psSrc) {
         local psDst is "root:/launcher/" + name + ".ps.ks".
         copyPath(psSrc, psDst).
-        launcher:add("postscript", psDst).
+        plan:add("postscript", psDst).
         logPrint("postscript found, copy to " + psDst).
     }
-
-    launcher:add("config", lexicon()).
 }
 
 function addLauncherConfig {
@@ -40,31 +38,34 @@ function addLauncherConfig {
     parameter param is lexicon().
 
     logPrint("add launcher config " + name).
-    launcher["config"]:add(name, param).
+    if param:istype("KOSDelegate") {
+        addPlanConfig(name, {
+            parameter param1 is lexicon().
+            combineLexicon(param1, plan["param"]).
+            param:call(plan["func"], param).
+        }).
+    } else {
+        addPlanConfig(name, {
+            parameter param1 is lexicon().
+            combineLexicon(param1, param).
+            combineLexicon(param1, plan["param"]).
+            plan["func"]:call(param1).
+        }).
+    }
 }
 
 function doExecuteLauncher {
-    parameter param.
+    parameter param is lexicon().
     
     local cfgName is "main".
-    if launcher["param"]:haskey("config") {
-        set cfgName to launcher["param"]["config"].
+    if plan["param"]:haskey("config") {
+        set cfgName to plan["param"]["config"].
     }
     if param:haskey("config") {
         set cfgName to param["config"].
     }
-    local configs is launcher["config"].
-    local cfg is configs[cfgName].
-
-    logPrint("execute launcher " + launcher["name"] + ", config " + cfgName).
-    if cfg:istype("KOSDelegate") {
-        combineLexicon(param, launcher["param"]).
-        cfg:call(launcher["func"], param).
-    } else {
-        combineLexicon(param, cfg).
-        combineLexicon(param, launcher["param"]).
-        launcher["func"]:call(param).
-    }
+    logPrint("execute launcher " + plan["name"] + ", config " + cfgName).
+    doExecutePlan(cfgName, param).
 }
 
 function loadLauncher {
@@ -78,9 +79,9 @@ function loadLauncher {
 function executeLauncher {
     logPrint("send startLauncher").
     local sent is lexicon("what", "startLauncher", "who", core:tag).
-    if launcher:haskey("postscript") {
+    if plan:haskey("postscript") {
         logPrint("postscript found, send path").
-        sent:add("postscript", launcher["postscript"]).
+        sent:add("postscript", plan["postscript"]).
     }
     root:connection:sendmessage(sent).
     
