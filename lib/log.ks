@@ -1,4 +1,8 @@
 global logPath is "root:/log/" + core:tag + ".log".
+if not kuniverse:canquicksave {
+    set logPath to "Archive:/log/sim/" + core:tag + ".log".
+    deletePath("Archive:/log/sim").
+}
 global logName is ship:name + " " + time:calendar.
 
 function openOrCreate {
@@ -36,16 +40,18 @@ function reportOrbit {
 }
 
 function copyLog {
-    local targetPath is "Archive:/log/sim".
     if kuniverse:canquicksave {
         // this is actual launch
-        set targetPath to "Archive:/log/" + logName.
+        local targetPath to "Archive:/log/" + logName.
+        if exists(targetPath) {
+            deletePath(targetPath).
+        }
+        local srcPath is "root:/log".
+        if not exists(srcPath) {
+            set srcPath to "Archive:/log/sim".
+        }
+        copyPath(srcPath, targetPath).
     }
-    
-    if exists(targetPath) {
-        deletePath(targetPath).
-    }
-    copyPath("root:/log", targetPath).
 }
 
 logPrint("log v0.1.0 loaded").
