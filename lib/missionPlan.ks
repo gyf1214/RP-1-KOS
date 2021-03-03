@@ -12,14 +12,15 @@ function initPlan {
 function addPlanConfig {
     parameter name.
     parameter func.
-    plan["config"]:add(name, func).
+    plan:config:add(name, func).
     logPrint("add plan config " + name).
 }
 
 function copyPlanConfig {
     parameter name.
     parameter name1.
-    plan["config"]:add(name, plan["config"][name1]).
+    plan:config:add(name, plan:config[name1]).
+    logPrint("add plan config " + name).
 }
 
 function doExecutePlan {
@@ -27,7 +28,7 @@ function doExecutePlan {
     parameter param is "".
 
     logPrint("start execute plan config " + cfg).
-    local f is plan["config"][cfg].
+    local f is plan:config[cfg].
     if param:istype("lexicon") {
         set f to f:bind(param).
     }
