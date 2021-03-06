@@ -1,11 +1,11 @@
 @lazyGlobal off.
 
 function callLauncher {
-    parameter config is "".
+    parameter cfg is "".
     parameter param is lexicon().
 
-    if config:length > 0 {
-        param:add("config", config).
+    if cfg:length > 0 {
+        param:add("config", cfg).
     }
 
     logPrint("wait for launcher ready").
@@ -33,4 +33,4 @@ function callLauncher {
     }
 }
 
-logPrint("launcherRemote v0.1.0 loaded").
+logPrint("launcherRemote v0.1.1 loaded").

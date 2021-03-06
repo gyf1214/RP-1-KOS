@@ -32,12 +32,6 @@ function MECO {
     wait 1.0.
 }
 
-function deployFairing {
-    logPrint("deploy fairing").
-    stage.
-    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
-}
-
 function launchOneStage {
     parameter offset is 0.0.
     parameter turnStart is 60.0.

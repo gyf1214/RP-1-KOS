@@ -97,4 +97,27 @@ function executeLauncher {
     root:connection:sendmessage(ret).
 }
 
-logPrint("launcher v0.1.0 loaded").
+function executeLauncherLocal {
+    parameter name.
+    parameter cfg is "".
+    parameter param is lexicon().
+
+    if cfg:length > 0 {
+        param:add(cfg).
+    }
+
+    loadLauncher(name).
+    if plan:haskey("postscript") {
+        logPrint("load postscript").
+        runOncePath(plan:postscript).
+    }
+    logPrint("start execute launcher").
+    doExecuteLauncher(param).
+    logPrint("finish execute launcher").
+    if plan:haskey("postscript") {
+        logPrint("execute postscript").
+        launcherPSMain(param).
+    }
+}
+
+logPrint("launcher v0.1.1 loaded").

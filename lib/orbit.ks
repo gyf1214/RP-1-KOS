@@ -2,31 +2,63 @@
 
 loadModule("launchOneStage.ks").
 loadModule("maneuver.ks").
+loadModule("vessel.ks").
 
-function doLaunchNStages {
-    parameter N is 2.
-    parameter offset is 0.0.
-    parameter turnStart is 60.0.
-    parameter azimuth is 90.0.
-    parameter sepTime is 0.7.
+function postFairing {
+    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
+}
+
+function deployFairing {
+    logPrint("deploy fairing").
+    local fairings is getAllFairings().
+    for part in fairings {
+        part:getModule("ProceduralFairingDecoupler"):doevent("jettison fairing").
+    }
+    postFairing().
+}
+
+function autoFairing {
+    parameter fairingHeight is 70000.
+    if ship:altitude < fairingHeight {
+        when ship:altitude >= fairingHeight then {
+            deployFairing().
+        }
+    } else {
+        postFairing().
+    }
+}
+
+function separateNStages {
+    parameter N.
+    parameter startStage is 0.
     parameter fairingHeight is 70000.
 
-    doLaunchOneStage(offset, turnStart, azimuth).
+    local sepTime is 0.7.
+    local waitmargin is 0.7.
 
-    when ship:altitude > fairingHeight then {
-        deployFairing().
-    }
+    autoFairing(fairingHeight).
 
-    from { local i is 1. } until i >= N step { set i to i + 1. } do {
+    from { local i is 1. } until i > N step { set i to i + 1. } do {
         wait until ship:maxThrust = 0.
-        logPrint("separate stage " + i).
+        logPrint("separate stage " + (startStage + i)).
         stage.
         wait sepTime.
         logPrint("ignite engine").
         stage.
         // this is to prevent ship:maxThrust is zero instantly
-        wait sepTime.
+        wait waitmargin.
     }
+}
+
+function doLaunchNStages {
+    parameter N.
+    parameter offset is 0.0.
+    parameter turnStart is 60.0.
+    parameter azimuth is 90.0.
+    parameter fairingHeight is 70000.
+
+    doLaunchOneStage(offset, turnStart, azimuth).
+    separateNStages(N - 1, 1, fairingHeight).
 }
 
 function deployPayload {
@@ -43,12 +75,13 @@ function finalNStages {
         parameter stopTime.
         return time:seconds >= stopTime.
     }.
-    parameter sepTime is 0.7.
+    local waitmargin is 0.7.
 
     logPrint("lock to maneuver direction").
     set ship:control:pilotmainthrottle to 0.0.
     rcs on.
-    lock steering to orbitVelAtTA(180):normalized.
+    local prograd is orbitVelAtTA(180):normalized.
+    lock steering to dirZZ(ship:facing, prograd).
 
     local totalTime is 0.
     local N is 0.
@@ -57,7 +90,7 @@ function finalNStages {
             break.
         }
         set N to N + 1.
-        set totalTime to totalTime + sepTime + sta:burntime.
+        set totalTime to totalTime + sta:septime + sta:burntime.
     }
 
     if finalTime <= 0 or finalTime > totalTime {
@@ -76,6 +109,11 @@ function finalNStages {
     logPrint("final " + N + " stages, total time " + finalTime).
     local waitTime is ETA:apoapsis - finalTime / 2.
 
+    if not stages[0]:hasmotor {
+        logPrint("deploy final stage 1").
+        stage.
+    }
+
     logPrint("wait until burn time, ETA " + waitTime).
     if waitTime > 0 {
         wait waitTime.
@@ -83,20 +121,30 @@ function finalNStages {
 
     local stopTime is 0.
     from { local i is 1. } until i > N step { set i to i + 1. } do {
-        logPrint("deploy final stage " + i).
-        stage.
+        local sta is stages[i - 1].
+
+        if i <> 1 or sta:hasmotor {
+            logPrint("deploy final stage " + i).
+            stage.
+        }
+        if not sta:hasmotor {
+            logPrint("rcs propel").
+            rcs on.
+            set ship:control:fore to 1.0.
+        }
         set ship:control:pilotmainthrottle to 1.0.
-        wait sepTime.
+        wait sta:septime.
         logPrint("ignite engine").
         stage.
+        set ship:control:fore to 0.0.
         if i = N {
-            set stopTime to time:seconds + finalTime - sepTime.
-            wait sepTime.
+            set stopTime to time:seconds + finalTime - waitmargin.
+            wait waitmargin.
             wait until ship:maxthrust = 0 or stopCondition:call(stopTime).
         } else {
-            wait sepTime.
+            wait waitmargin.
             wait until ship:maxthrust = 0.
-            set finalTime to finalTime - stages[i - 1]:burntime - sepTime.
+            set finalTime to finalTime - sta:burntime - sta:septime.
         }
     }
     MECO().
@@ -120,16 +168,11 @@ function targetOrbitAlt {
     local finalTime is multiStagesBurntime(dv, stages).
     logPrint("set burntime to " + finalTime).
 
+    local R is ship:orbit:body:radius.
     local stopCondition is {
         parameter stopTime.
-        return ship:orbit:apoapsis >= targetAlt.
+        return ship:orbit:semimajoraxis >= R + (curAP + targetAlt) / 2.
     }.
-    if curAP > targetAlt {
-        set stopCondition to {
-            parameter stopTime.
-            return ship:orbit:periapsis >= targetAlt.
-        }.
-    }
 
     finalNStages(stages, finalTime, stopCondition).
 }

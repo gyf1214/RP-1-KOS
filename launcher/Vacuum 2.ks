@@ -11,6 +11,7 @@ function vacuum_2 {
 initLauncher("Vacuum 2", vacuum_2@, lexicon("config", "main", "offset", 1.5, "azimuth", 90)).
 addLauncherConfig("main").
 addLauncherConfig("sso", lexicon("offset", 1.4, "azimuth", 197)).
-addLauncherConfig("comm1", lexicon("offset", 1.1, "azimuth", 123)).
+// addLauncherConfig("comm1", lexicon("offset", 1.1, "azimuth", 123)).
+addLauncherConfig("wea1").
 
 logPrint("Vacuum 2 launcher profile v0.1.0 loaded").
