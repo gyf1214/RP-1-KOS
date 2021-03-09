@@ -18,7 +18,12 @@ local tinyveeX is {
     wait 1.
     stage.
     reportOrbit().
+    wait until ship:altitude < maxAlt.
+    logPrint("deploy air brake").
+    brakes on.
 }.
 
 initPlan("TinyVee X").
 addPlanConfig("TinyVee X-2", tinyveeX:bind(2.5, 90)).
+addPlanConfig("TinyVee X-3", tinyveeX:bind(1, 0)).
+addPlanConfig("TinyVee X-4", tinyveeX:bind(2.5, 0)).

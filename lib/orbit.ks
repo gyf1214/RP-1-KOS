@@ -68,6 +68,31 @@ function deployPayload {
     reportOrbit().
 }
 
+function shipStable {
+    parameter desiredFore is ship:facing:forevector.
+
+    local fore is ship:facing:forevector:normalized.
+    return vAng(fore, desiredFore) < 0.2 and
+           (ship:angularVel - vDot(ship:angularVel, fore) * fore):mag < 2e-4.
+}
+
+function warpWait {
+    parameter waitTime is 0.
+    parameter desiredFore is ship:facing:forevector.
+    parameter graceTime is 15.
+
+    logPrint("warp wait: " + waitTime + "s").
+    local now is time:seconds.
+    local stopTime is now + waitTime.
+    wait until time:seconds >= stopTime or shipStable(desiredFore).
+    set kuniverse:timewarp:rate to 1.
+    set kuniverse:timewarp:mode to "RAILS".
+    if stopTime - time:seconds > graceTime {
+        kuniverse:timewarp:warpto(stopTime - graceTime).
+    }
+    wait until time:seconds >= stopTime.
+}
+
 function finalNStages {
     parameter stages is list().
     parameter finalTime is 0.
@@ -107,7 +132,7 @@ function finalNStages {
     }
 
     logPrint("final " + N + " stages, total time " + finalTime).
-    local waitTime is ETA:apoapsis - finalTime / 2.
+    local waitTime is ETA:apoapsis - (finalTime + stages[0]:septime) / 2.
 
     if not stages[0]:hasmotor {
         logPrint("deploy final stage 1").
@@ -116,7 +141,7 @@ function finalNStages {
 
     logPrint("wait until burn time, ETA " + waitTime).
     if waitTime > 0 {
-        wait waitTime.
+        warpWait(waitTime, prograd).
     }
 
     local stopTime is 0.
@@ -138,7 +163,7 @@ function finalNStages {
         stage.
         set ship:control:fore to 0.0.
         if i = N {
-            set stopTime to time:seconds + finalTime - waitmargin.
+            set stopTime to time:seconds + finalTime - sta:septime.
             wait waitmargin.
             wait until ship:maxthrust = 0 or stopCondition:call(stopTime).
         } else {

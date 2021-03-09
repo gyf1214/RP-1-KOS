@@ -13,4 +13,5 @@ copyPlanConfig("Galileo 6",  "Galileo 4").
 copyPlanConfig("Galileo 7",  "Galileo 5").
 addPlanConfig ("Galileo 8",  callLauncher@:bind("sso")).
 copyPlanConfig("Galileo 9",  "Galileo 8").
-addPlanConfig ("Galileo 10", callLauncher@:bind("comm1")).
+// deprecated, switch to Newton 1
+// addPlanConfig ("Galileo 10", callLauncher@:bind("comm1")).

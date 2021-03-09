@@ -105,13 +105,6 @@ function multiStagesBurntime {
 
     local ret is 0.
     for sta in stages {
-        if not sta:haskey("septime") {
-            if sta:hasmotor {
-                sta:add("septime", 0.7).
-            } else {
-                sta:add("septime", 5).
-            }
-        }
         set ret to ret + sta:septime.
         if sta:dv >= dv {
             local endmass is sta:wetmass / (constant:e ^ (dv / (sta:isp * constant:g0))).

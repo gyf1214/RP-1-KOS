@@ -21,12 +21,18 @@ function initLauncher {
     
     logPrint("init launcher " + name).
     initPlan(name).
+    param:add("launcher", name).
     plan:add("func", func).
     plan:add("param", param).
 
-    local psSrc is "Archive:/launcher/" + name + ".ps.ks".
+    local psname is name.
+    if param:haskey("psname") {
+        set psname to param:psname.
+    }
+
+    local psSrc is "Archive:/launcher/" + psname + ".ps.ks".
     if exists(psSrc) {
-        local psDst is "root:/launcher/" + name + ".ps.ks".
+        local psDst is "root:/launcher/" + psname + ".ps.ks".
         copyPath(psSrc, psDst).
         plan:add("postscript", psDst).
         logPrint("postscript found, copy to " + psDst).

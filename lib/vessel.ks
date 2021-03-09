@@ -54,6 +54,10 @@ function getFinalStageInfo {
     local massFlow is thrust / (constant:g0 * isp).
     local burnTime is (wetmass - drymass) / massFlow.
     local dv is ln(wetmass / drymass) * constant:g0 * isp.
+    local sepTime is 0.7.
+    if not hasMotor {
+        set sepTime to 5.
+    }
 
     local ret is lexicon(
         "wetmass", wetmass,
@@ -63,12 +67,14 @@ function getFinalStageInfo {
         "isp", isp,
         "massflow", massFlow,
         "dv", dv,
-        "hasmotor", hasMotor
+        "hasmotor", hasMotor,
+        "septime", sepTime
     ).
     logPrint("stage " + stagenum + ": " + burnTime + "s").
     logPrint("mass: " + drymass + "t/" + wetmass + "t").
     logPrint("dv: " + dv + "m/s").
     logPrint("has sep motor: " + hasMotor).
+    logPrint("separation time: " + sepTime).
     return ret.
 }
 

@@ -8,7 +8,7 @@ function vacuum_2 {
     wait until ship:maxthrust = 0.
 }
 
-initLauncher("Vacuum 2", vacuum_2@, lexicon("config", "main", "offset", 1.5, "azimuth", 90)).
+initLauncher("Vacuum 2", vacuum_2@, lexicon("config", "main", "psname", "Vacuum 1 & 2", "offset", 1.5, "azimuth", 90)).
 addLauncherConfig("main").
 addLauncherConfig("sso", lexicon("offset", 1.4, "azimuth", 197)).
 // addLauncherConfig("comm1", lexicon("offset", 1.1, "azimuth", 123)).
