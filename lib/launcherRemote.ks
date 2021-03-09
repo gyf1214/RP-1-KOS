@@ -1,8 +1,11 @@
 @lazyGlobal off.
 
+loadModule("launchOneStage.ks").
+
 function callLauncher {
     parameter cfg is "".
     parameter param is lexicon().
+    parameter deploy is true.
 
     if cfg:length > 0 {
         param:add("config", cfg).
@@ -30,6 +33,10 @@ function callLauncher {
     if hasPS {
         logPrint("execute postscript").
         launcherPSMain(msg:param).
+    }
+
+    if deploy {
+        deployPayload().
     }
 }
 

@@ -4,30 +4,6 @@ loadModule("launchOneStage.ks").
 loadModule("maneuver.ks").
 loadModule("vessel.ks").
 
-function postFairing {
-    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
-}
-
-function deployFairing {
-    logPrint("deploy fairing").
-    local fairings is getAllFairings().
-    for part in fairings {
-        part:getModule("ProceduralFairingDecoupler"):doevent("jettison fairing").
-    }
-    postFairing().
-}
-
-function autoFairing {
-    parameter fairingHeight is 70000.
-    if ship:altitude < fairingHeight {
-        when ship:altitude >= fairingHeight then {
-            deployFairing().
-        }
-    } else {
-        postFairing().
-    }
-}
-
 function separateNStages {
     parameter N.
     parameter startStage is 0.
@@ -59,38 +35,6 @@ function doLaunchNStages {
 
     doLaunchOneStage(offset, turnStart, azimuth).
     separateNStages(N - 1, 1, fairingHeight).
-}
-
-function deployPayload {
-    logPrint("deploy payload").
-    stage.
-    wait 1.
-    reportOrbit().
-}
-
-function shipStable {
-    parameter desiredFore is ship:facing:forevector.
-
-    local fore is ship:facing:forevector:normalized.
-    return vAng(fore, desiredFore) < 0.2 and
-           (ship:angularVel - vDot(ship:angularVel, fore) * fore):mag < 2e-4.
-}
-
-function warpWait {
-    parameter waitTime is 0.
-    parameter desiredFore is ship:facing:forevector.
-    parameter graceTime is 15.
-
-    logPrint("warp wait: " + waitTime + "s").
-    local now is time:seconds.
-    local stopTime is now + waitTime.
-    wait until time:seconds >= stopTime or shipStable(desiredFore).
-    set kuniverse:timewarp:rate to 1.
-    set kuniverse:timewarp:mode to "RAILS".
-    if stopTime - time:seconds > graceTime {
-        kuniverse:timewarp:warpto(stopTime - graceTime).
-    }
-    wait until time:seconds >= stopTime.
 }
 
 function finalNStages {
@@ -173,8 +117,6 @@ function finalNStages {
         }
     }
     MECO().
-    wait 1.
-    deployPayload().
     if not stopCondition:call(stopTime) {
         logPrint("warning: maybe not in correct orbit").
     }
@@ -242,4 +184,4 @@ function targetOrbitAPPE {
     targetOrbitAlt(stages, targetAlt).
 }
 
-logPrint("orbit v0.5.0 loaded").
+logPrint("orbit v0.5.1 loaded").
