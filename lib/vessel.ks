@@ -112,4 +112,47 @@ function getAllFairings {
     return b.
 }
 
-logPrint("vessel v0.1.2 loaded").
+function getAllBoosters {
+    parameter stageNum.
+    
+    local a is list().
+    local b is list().
+    local minStage is stage:number.
+
+    logPrint("find boosters in stage " + stageNum).
+    for engine in ship:parts {
+        if engine:istype("engine") and engine:stage = stageNum {
+            a:add(engine).
+            if engine:decoupledin < minStage {
+                set minStage to engine:decoupledin.
+            }
+        }
+    }
+
+    logPrint("core engine decoupled in stage " + minStage).
+    for engine in a {
+        if engine:decoupledin = minStage {
+            logPrint("core engine: " + engine:name).
+        } else {
+            logPrint("booster: " + engine:name).
+            b:add(engine).
+        }
+    }
+
+    return b.
+}
+
+function getPartDecoupler {
+    parameter part.
+
+    until part:istype("decoupler") or not part:hasparent {
+        set part to part:parent.
+    }
+
+    if not part:istype("decoupler") {
+        logPrint("warning: cannot get decoupler for part: " + part:name).
+    }
+    return part.
+}
+
+logPrint("vessel v0.1.3 loaded").

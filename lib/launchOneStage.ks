@@ -1,6 +1,23 @@
 @lazyGlobal off.
 
 loadModule("nav.ks").
+loadModule("vessel.ks").
+
+function autoBoosters {
+    local igniteStage is stage:number - 1.
+
+    local boosters is getAllBoosters(igniteStage).
+    for part in boosters {
+        local me is part.
+        local decoupler is getPartDecoupler(me).
+        when stage:number < igniteStage and me:maxthrust < 0.1 * me:possiblethrust then {
+            logPrint("booster: " + me:name + " flameout").
+            me:shutdown().
+            logPrint("decouple booster: " + me:name).
+            decoupler:getModule("ModuleDecouple"):doEvent("decouple").
+        }
+    }
+}
 
 function doLaunchOneStage {
     parameter offset is 0.0.
@@ -55,11 +72,14 @@ function warpWait {
     logPrint("warp wait: " + waitTime + "s").
     local now is time:seconds.
     local stopTime is now + waitTime.
-    wait until time:seconds >= stopTime or shipStable(desiredFore).
+    local preStopTime is stopTime - graceTime.
+    set kuniverse:timewarp:rate to 2.
+    set kuniverse:timewarp:mode to "PHYSICS".
+    wait until time:seconds >= preStopTime or (shipStable(desiredFore) and ship:altitude > 140000).
     set kuniverse:timewarp:rate to 1.
     set kuniverse:timewarp:mode to "RAILS".
-    if stopTime - time:seconds > graceTime {
-        kuniverse:timewarp:warpto(stopTime - graceTime).
+    if time:seconds < preStopTime {
+        kuniverse:timewarp:warpto(preStopTime).
     }
     wait until time:seconds >= stopTime.
 }

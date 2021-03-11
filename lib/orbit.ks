@@ -2,7 +2,6 @@
 
 loadModule("launchOneStage.ks").
 loadModule("maneuver.ks").
-loadModule("vessel.ks").
 
 function separateNStages {
     parameter N.

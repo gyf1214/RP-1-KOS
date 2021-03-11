@@ -1,6 +1,6 @@
 @lazyGlobal off.
 
-loadFile("launcher/Vacuum Circularize.ks").
+loadFile("launcher/Vacuum.ks").
 
 function launcherPSMain {
     parameter params.
