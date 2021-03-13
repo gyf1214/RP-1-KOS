@@ -3,19 +3,39 @@
 loadModule("nav.ks").
 loadModule("vessel.ks").
 
-function autoBoosters {
-    local igniteStage is stage:number - 1.
-
-    local boosters is getAllBoosters(igniteStage).
-    for part in boosters {
-        local me is part.
-        local decoupler is getPartDecoupler(me).
-        when stage:number < igniteStage and me:maxthrust < 0.1 * me:possiblethrust then {
-            logPrint("booster: " + me:name + " flameout").
-            me:shutdown().
-            logPrint("decouple booster: " + me:name).
-            decoupler:getModule("ModuleDecouple"):doEvent("decouple").
+function decouplePart {
+    parameter part.
+    local modules is list("ModuleDecouple", "ModuleAnchoredDecoupler").
+    for module in modules {
+        if part:hasModule(module) {
+            part:getmodule(module):doEvent("decouple").
         }
+    }
+}
+
+function registerBooster {
+    parameter coreStageInfo.
+    parameter booster.
+
+    local me is booster:engine.
+    when me:thrust < 0.1 * me:possiblethrust then {
+        logPrint("booster: " + me:name + " flameout").
+        logPrint("thrust: " + me:thrust + " / " + me:possiblethrust).
+        me:shutdown().
+        logPrint("decouple booster: " + me:name).
+        decouplePart(booster:decoupler).
+        set coreStageInfo:remainBoosters to coreStageInfo:remainBoosters - 1.
+        logPrint("remain " + coreStageInfo:remainBoosters + " boosters").
+    }
+}
+
+function autoBoosters {
+    parameter coreStageInfo.
+
+    coreStageInfo:add("remainBoosters", coreStageInfo:boosters:length).
+    logPrint("total " + coreStageInfo:boosters:length + " boosters").
+    for booster in coreStageInfo:boosters {
+        registerBooster(coreStageInfo, booster).
     }
 }
 
@@ -23,6 +43,8 @@ function doLaunchOneStage {
     parameter offset is 0.0.
     parameter turnStart is 60.0.
     parameter azimuth is 90.0.
+
+    local coreStageInfo is getCoreStageInfo(stage:number - 2).
 
     logPrint("launch for direction: " + azimuth).
     set ship:control:pilotmainthrottle to 1.0.
@@ -36,10 +58,19 @@ function doLaunchOneStage {
     wait 3.
     stage.
     logPrint("lift off").
+    wait 1.
+    logPrint("register boosters").
+    autoBoosters(coreStageInfo).
 
     wait until ship:airspeed > turnStart.
     logPrint("gravity turn with offset: " + offset).
     lock steering to dirZZ(ship:facing, pitchOffset(yy, zz, vv, azimuth, offset)).
+    wait until coreStageInfo:remainBoosters <= 0.
+    logPrint("all boosters decoupled").
+    until stage:number <= coreStageInfo:coreStage + 1 {
+        stage.
+        wait 1.
+    }
 }
 
 function MECO {
@@ -119,4 +150,4 @@ function launchOneStage {
     MECO().
 }
 
-logPrint("launchOneStage v0.1.4 loaded").
+logPrint("launchOneStage v0.1.5 loaded").

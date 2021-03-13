@@ -27,8 +27,8 @@ function vacuum_circularize {
 
 function vacuum_launch {
     parameter stageNum.
-    parameter finalStageNum.
     parameter turnStart.
+    parameter finalStageNum.
     parameter params.
 
     doLaunchNStages(stageNum, params:offset, turnStart, params:azimuth).
@@ -38,4 +38,4 @@ function vacuum_launch {
     }
 }
 
-logPrint("Vacuum launcher profile v0.3.1 loaded").
+logPrint("Vacuum launcher profile v0.3.2 loaded").

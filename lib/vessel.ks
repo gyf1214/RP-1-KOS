@@ -112,36 +112,6 @@ function getAllFairings {
     return b.
 }
 
-function getAllBoosters {
-    parameter stageNum.
-    
-    local a is list().
-    local b is list().
-    local minStage is stage:number.
-
-    logPrint("find boosters in stage " + stageNum).
-    for engine in ship:parts {
-        if engine:istype("engine") and engine:stage = stageNum {
-            a:add(engine).
-            if engine:decoupledin < minStage {
-                set minStage to engine:decoupledin.
-            }
-        }
-    }
-
-    logPrint("core engine decoupled in stage " + minStage).
-    for engine in a {
-        if engine:decoupledin = minStage {
-            logPrint("core engine: " + engine:name).
-        } else {
-            logPrint("booster: " + engine:name).
-            b:add(engine).
-        }
-    }
-
-    return b.
-}
-
 function getPartDecoupler {
     parameter part.
 
@@ -155,4 +125,37 @@ function getPartDecoupler {
     return part.
 }
 
-logPrint("vessel v0.1.3 loaded").
+function getCoreStageInfo {
+    parameter stageNum.
+    
+    local a is list().
+    local minStage is stage:number.
+    local ret is lexicon("coreEngines", list(), "boosters", list()).
+
+    logPrint("find boosters in lift stage " + stageNum).
+    for engine in ship:parts {
+        if engine:istype("engine") and engine:stage >= stageNum {
+            a:add(engine).
+            if engine:decoupledin < minStage {
+                set minStage to engine:decoupledin.
+            }
+        }
+    }
+
+    logPrint("core engine decoupled in stage " + minStage).
+    ret:add("coreStage", minStage).
+    for engine in a {
+        if engine:decoupledin = minStage {
+            logPrint("core engine: " + engine:name).
+            ret:coreEngines:add(engine).
+        } else {
+            logPrint("booster: " + engine:name).
+            local decoupler is getPartDecoupler(engine).
+            ret:boosters:add(lexicon("engine", engine, "decoupler", decoupler, "stage", engine:decoupledin)).
+        }
+    }
+
+    return ret.
+}
+
+logPrint("vessel v0.1.4 loaded").

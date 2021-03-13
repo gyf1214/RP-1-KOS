@@ -1,12 +1,14 @@
 @lazyGlobal off.
 
 function openTerminal {
-    core:doevent("Open Terminal").
-    set terminal:height to 48.
-    set terminal:width to 42.
+    // core:doevent("Open Terminal").
+    set terminal:height to 72.
+    set terminal:width to 54.
     set terminal:brightness to 0.8.
-    set terminal:charheight to 14.
+    set terminal:charheight to 10.
 }
+
+openTerminal().
 
 function loadFile {
     parameter path.
@@ -62,4 +64,4 @@ function getRoot {
 }
 
 loadModule("log.ks").
-logPrint("bootstrap v0.2.1 loaded").
+logPrint("bootstrap v0.2.2 loaded").
