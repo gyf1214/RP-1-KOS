@@ -115,27 +115,19 @@ function warpWait {
     wait until time:seconds >= stopTime.
 }
 
-function postFairing {
-    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
-}
-
 function deployFairing {
     logPrint("deploy fairing").
     local fairings is getAllFairings().
     for part in fairings {
         part:getModule("ProceduralFairingDecoupler"):doevent("jettison fairing").
     }
-    postFairing().
+    lock steering to dirZZ(ship:facing, ship:prograde:forevector).
 }
 
 function autoFairing {
     parameter fairingHeight is 70000.
-    if ship:altitude < fairingHeight {
-        when ship:altitude >= fairingHeight then {
-            deployFairing().
-        }
-    } else {
-        postFairing().
+    when ship:altitude >= fairingHeight then {
+        deployFairing().
     }
 }
 
@@ -150,4 +142,4 @@ function launchOneStage {
     MECO().
 }
 
-logPrint("launchOneStage v0.1.5 loaded").
+logPrint("launchOneStage v0.1.6 loaded").

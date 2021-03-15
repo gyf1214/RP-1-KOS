@@ -6,12 +6,9 @@ loadModule("maneuver.ks").
 function separateNStages {
     parameter N.
     parameter startStage is 0.
-    parameter fairingHeight is 70000.
 
     local sepTime is 0.7.
     local waitmargin is 0.7.
-
-    autoFairing(fairingHeight).
 
     from { local i is 1. } until i > N step { set i to i + 1. } do {
         wait until ship:maxThrust = 0.
@@ -32,8 +29,9 @@ function doLaunchNStages {
     parameter azimuth is 90.0.
     parameter fairingHeight is 70000.
 
+    autoFairing(fairingHeight).
     doLaunchOneStage(offset, turnStart, azimuth).
-    separateNStages(N - 1, 1, fairingHeight).
+    separateNStages(N - 1, 1).
 }
 
 function finalNStages {
@@ -183,4 +181,4 @@ function targetOrbitAPPE {
     targetOrbitAlt(stages, targetAlt).
 }
 
-logPrint("orbit v0.5.1 loaded").
+logPrint("orbit v0.5.2 loaded").
