@@ -139,11 +139,11 @@ function warpWait {
     local now is time:seconds.
     local stopTime is now + waitTime.
     local preStopTime is stopTime - graceTime.
-    set kuniverse:timewarp:rate to 2.
     set kuniverse:timewarp:mode to "PHYSICS".
+    set kuniverse:timewarp:rate to 2.
     wait until time:seconds >= preStopTime or (shipStable(desiredFore) and ship:altitude > 140000).
-    set kuniverse:timewarp:rate to 1.
     set kuniverse:timewarp:mode to "RAILS".
+    set kuniverse:timewarp:rate to 1.
     if time:seconds < preStopTime {
         kuniverse:timewarp:warpto(preStopTime).
     }
@@ -177,4 +177,4 @@ function launchOneStage {
     MECO().
 }
 
-logPrint("launchOneStage v0.1.7 loaded").
+logPrint("launchOneStage v0.1.8 loaded").

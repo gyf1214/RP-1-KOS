@@ -20,6 +20,8 @@ function vacuum_circularize {
         targetOrbitEcc(stages, 0.004, 300000).
     } else if params:config = "tli" {
         targetOrbitAlt(stages, 350000000).
+    } else if params:config = "suborbit" {
+        targetOrbitAlt(stages, 90000).
     } else {
         finalNStages(stages).
     }
@@ -38,4 +40,4 @@ function vacuum_launch {
     }
 }
 
-logPrint("Vacuum launcher profile v0.3.2 loaded").
+logPrint("Vacuum launcher profile v0.3.3 loaded").

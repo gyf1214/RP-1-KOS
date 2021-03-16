@@ -8,5 +8,6 @@ addLauncherConfig("comm1", lexicon("offset", 1.2, "azimuth", 120)).
 addLauncherConfig("wea1", lexicon("offset", 1.6)).
 // deprecated, use Vacuum 4
 // addLauncherConfig("comm2", lexicon("offset", 1.1, "azimuth", 136)).
+addLauncherConfig("suborbit").
 
-logPrint("Vacuum 3 launcher profile v0.2.1 loaded").
+logPrint("Vacuum 3 launcher profile v0.2.2 loaded").
