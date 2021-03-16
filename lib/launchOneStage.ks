@@ -39,6 +39,31 @@ function autoBoosters {
     }
 }
 
+function checkEngineIgnition {
+    parameter engine.
+    if stage:number <= engine:stage and engine:thrust < 0.5 * engine:possiblethrust {
+        logPrint("warning: engine " + engine:name + " ignition failed").
+        return false.
+    }
+    return true.
+}
+
+function checkIgnition {
+    parameter coreStageInfo.
+
+    for engine in coreStageInfo:coreEngines {
+        if not checkEngineIgnition(engine) {
+            return false.
+        }
+    }
+    for booster in coreStageInfo:boosters {
+        if not checkEngineIgnition(booster:engine) {
+            return false.
+        }
+    }
+    return true.
+}
+
 function doLaunchOneStage {
     parameter offset is 0.0.
     parameter turnStart is 60.0.
@@ -56,6 +81,16 @@ function doLaunchOneStage {
     logPrint("ignite engine").
     stage.
     wait 3.
+    if not checkIgnition(coreStageInfo) {
+        logPrint("warning: engine ignition check failed, terminate launch!").
+        for engine in coreStageInfo:coreEngines {
+            engine:shutdown.
+        }
+        for booster in coreStageInfo:boosters {
+            booster:engine:shutdown.
+        }
+        shutdown.
+    }
     stage.
     logPrint("lift off").
     wait 1.
@@ -142,4 +177,4 @@ function launchOneStage {
     MECO().
 }
 
-logPrint("launchOneStage v0.1.6 loaded").
+logPrint("launchOneStage v0.1.7 loaded").
