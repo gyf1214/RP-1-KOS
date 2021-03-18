@@ -49,5 +49,6 @@ function copyLog {
     copyPath(srcPath, targetPath).
 }
 
-logPrint("log v0.1.1 loaded").
+logPrint("log v0.1.2 loaded").
 logPrint("current log path is " + logPath).
+logPrint("current log name is " + logName).

@@ -54,6 +54,7 @@ function bootMissionPlan {
 }
 
 wait until ship:unpacked.
+wait 2.
 clearScreen.
 
 global root is ship:rootpart:getmodule("kOSProcessor").
@@ -64,4 +65,4 @@ function getRoot {
 }
 
 loadModule("log.ks").
-logPrint("bootstrap v0.2.2 loaded").
+logPrint("bootstrap v0.2.3 loaded").

@@ -122,34 +122,6 @@ function deployPayload {
     reportOrbit().
 }
 
-function shipStable {
-    parameter desiredFore is ship:facing:forevector.
-
-    local fore is ship:facing:forevector:normalized.
-    return vAng(fore, desiredFore) < 0.2 and
-           (ship:angularVel - vDot(ship:angularVel, fore) * fore):mag < 2e-4.
-}
-
-function warpWait {
-    parameter waitTime is 0.
-    parameter desiredFore is ship:facing:forevector.
-    parameter graceTime is 15.
-
-    logPrint("warp wait: " + waitTime + "s").
-    local now is time:seconds.
-    local stopTime is now + waitTime.
-    local preStopTime is stopTime - graceTime.
-    set kuniverse:timewarp:mode to "PHYSICS".
-    set kuniverse:timewarp:rate to 2.
-    wait until time:seconds >= preStopTime or (shipStable(desiredFore) and ship:altitude > 140000).
-    set kuniverse:timewarp:mode to "RAILS".
-    set kuniverse:timewarp:rate to 1.
-    if time:seconds < preStopTime {
-        kuniverse:timewarp:warpto(preStopTime).
-    }
-    wait until time:seconds >= stopTime.
-}
-
 function deployFairing {
     logPrint("deploy fairing").
     local fairings is getAllFairings().
@@ -177,4 +149,4 @@ function launchOneStage {
     MECO().
 }
 
-logPrint("launchOneStage v0.1.8 loaded").
+logPrint("launchOneStage v0.1.9 loaded").

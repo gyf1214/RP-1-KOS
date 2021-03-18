@@ -1,7 +1,7 @@
 @lazyGlobal off.
 
 loadModule("launcherRemote.ks").
-logPrint("Galileo mission plans").
+logPrint("Galileo: First Satellite").
 
 initPlan("Galileo").
 addPlanConfig ("Galileo 1",  callLauncher@:bind("main")).

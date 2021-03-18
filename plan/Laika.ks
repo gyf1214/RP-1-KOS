@@ -20,12 +20,22 @@ function transScience {
 }
 
 local laika is {
+    parameter cfg.
     parameter params is lexicon().
-    parameter maxAlt is 140000.
-    parameter controlAlt is 90000.
+    parameter controlAlt is 100000.
     setEC(false).
-    callLauncher("suborbit", params).
-    wait until ship:altitude < maxAlt.
+    callLauncher(cfg, params).
+    if cfg = "sample1" {
+        wait until ship:altitude < 140000.
+    } else {
+        local stayTime is 86400.
+        set stayTime to eta:apoapsis + ceiling(86400 / ship:orbit:period) * ship:orbit:period.
+        logPrint("staying, eta: " + stayTime).
+        if addons:available("KAC") {
+            addAlarm("Raw", time:seconds + stayTime, ship:name + " Return", "").
+        }
+        wait stayTime.
+    }
     setEC(true).
     transScience().
     wait 1.
@@ -34,6 +44,12 @@ local laika is {
     logPrint("start reentry control").
     rcs on.
     lock steering to dirZZ(ship:facing, ship:srfretrograde:forevector).
+    if cfg <> "sample1" {
+        wait 1.
+        wait until shipStable(ship:srfretrograde:forevector).
+        logPrint("ignite").
+        stage.
+    }
     wait until ship:altitude < controlAlt.
     logPrint("end reentry control").
     unlock steering.
@@ -41,4 +57,5 @@ local laika is {
 
 logPrint("Laika mission plans").
 initPlan("Laika").
-addPlanConfig ("Laika 1",  laika).
+addPlanConfig ("Laika 1",  laika:bind("sample1")).
+addPlanConfig ("Laika 2",  laika:bind("sample2")).
