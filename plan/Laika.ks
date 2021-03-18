@@ -25,7 +25,8 @@ local laika is {
     parameter controlAlt is 100000.
     setEC(false).
     callLauncher(cfg, params).
-    if cfg = "sample1" {
+    local inOrbit is ship:orbit:periapsis > 140000.
+    if not inOrbit {
         wait until ship:altitude < 140000.
     } else {
         local stayTime is 86400.
@@ -44,13 +45,17 @@ local laika is {
     logPrint("start reentry control").
     rcs on.
     lock steering to dirZZ(ship:facing, ship:srfretrograde:forevector).
-    if cfg <> "sample1" {
+    if inOrbit {
         wait 1.
         wait until shipStable(ship:srfretrograde:forevector).
         logPrint("ignite").
         stage.
     }
     wait until ship:altitude < controlAlt.
+    if stage:number > 0 {
+        logPrint("deploy parachute").
+        stage.
+    }
     logPrint("end reentry control").
     unlock steering.
 }.

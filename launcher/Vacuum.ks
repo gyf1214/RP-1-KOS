@@ -23,7 +23,7 @@ function vacuum_circularize {
     } else if params:config = "sample1" {
         targetOrbitAlt(stages, 90000).
     } else if params:config = "sample2" {
-        targetOrbitAlt(stages, 150000).
+        targetOrbitAPPE(stages, 200000, 200000).
     } else {
         finalNStages(stages).
     }
