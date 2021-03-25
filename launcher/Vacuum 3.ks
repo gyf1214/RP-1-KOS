@@ -12,4 +12,4 @@ addLauncherConfig("sample1").
 addLauncherConfig("sample2").
 addLauncherConfig("nav2", lexicon("offset", 1.15, "azimuth", 165)).
 
-logPrint("Vacuum 3 launcher profile v0.2.2 loaded").
+fileVersion("0.2.2").

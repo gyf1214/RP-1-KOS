@@ -44,4 +44,4 @@ function vacuum_launch {
     }
 }
 
-logPrint("Vacuum launcher profile v0.3.3 loaded").
+fileVersion("0.3.3").

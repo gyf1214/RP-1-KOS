@@ -50,4 +50,4 @@ function warpWait {
     wait until time:seconds >= stopTime.
 }
 
-logPrint("nav v0.1.3 loaded").
+fileVersion("0.1.3").

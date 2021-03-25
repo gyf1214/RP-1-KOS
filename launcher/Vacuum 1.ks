@@ -7,4 +7,4 @@ addLauncherConfig("main").
 addLauncherConfig("polar", lexicon("offset", 2, "azimuth", 190)).
 addLauncherConfig("nav", lexicon("offset", 1.7, "azimuth", 135)).
 
-logPrint("Vacuum 1 launcher profile v0.2.1 loaded").
+fileVersion("0.2.1").

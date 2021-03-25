@@ -1,13 +1,13 @@
 @lazyGlobal off.
 
 function main {
+    parameter prelaunch is true.
+
     local path is "lib/bootstrap.ks".
     copyPath("Archive:/" + path, path).
-    runOncePath(path).
+    runOncePath(path, prelaunch).
     
     bootMissionPlan().
 }
 
-if ship:status = "PRELAUNCH" {
-    main().
-}
+main(ship:status = "PRELAUNCH").

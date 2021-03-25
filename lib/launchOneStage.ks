@@ -149,4 +149,4 @@ function launchOneStage {
     MECO().
 }
 
-logPrint("launchOneStage v0.1.9 loaded").
+fileVersion("0.1.9").

@@ -7,4 +7,4 @@ function launcherPSMain {
     vacuum_circularize(2, params).
 }
 
-logPrint("Vacuum 1 & 2 launcher postscript v0.3.0 loaded").
+fileVersion("0.3.0").

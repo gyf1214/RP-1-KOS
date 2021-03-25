@@ -9,4 +9,4 @@ addLauncherConfig("sso", lexicon("offset", 1.4, "azimuth", 197)).
 // addLauncherConfig("comm1", lexicon("offset", 1.1, "azimuth", 123)).
 // addLauncherConfig("wea1").
 
-logPrint("Vacuum 2 launcher profile v0.1.1 loaded").
+fileVersion("0.1.1").

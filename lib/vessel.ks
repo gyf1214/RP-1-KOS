@@ -158,4 +158,4 @@ function getCoreStageInfo {
     return ret.
 }
 
-logPrint("vessel v0.1.4 loaded").
+fileVersion("0.1.4").

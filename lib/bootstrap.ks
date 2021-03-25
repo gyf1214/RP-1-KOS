@@ -1,5 +1,7 @@
 @lazyGlobal off.
 
+parameter prelaunch is true.
+
 function openTerminal {
     // core:doevent("Open Terminal").
     set terminal:height to 72.
@@ -8,14 +10,20 @@ function openTerminal {
     set terminal:charheight to 10.
 }
 
-openTerminal().
-
 function loadFile {
     parameter path.
+    local oldFile is boot:loadFile.
+    local oldCopy is boot:copyFile.
+    set boot:loadFile to path.
     if not exists(path) {
         copyPath("Archive:/" + path, path).
+        set boot:copyFile to true.
+    } else {
+        set boot:copyFile to false.
     }
     runOncePath(path).
+    set boot:copyFile to oldCopy.
+    set boot:loadFile to oldFile.
 }
 
 function loadModule {
@@ -23,8 +31,14 @@ function loadModule {
     loadFile("lib/" + path).
 }
 
+function fileVersion {
+    parameter version.
+    if boot:copyFile {
+        logPrint("Load File: " + boot:loadFile + ", Version: " + version).
+    }
+}
+
 function bootPlan {
-    logPrint("plan system v0.1.2 loaded").
     logPrint("current plan: " + core:tag).
     logPrint("executing...").
     
@@ -55,8 +69,15 @@ function bootMissionPlan {
     shutdown.
 }
 
+global boot is lexicon(
+    "loadFile", "lib/bootstrap.ks",
+    "copyFile", prelaunch,
+    "prelaunch", prelaunch
+).
+
 wait until ship:unpacked.
 wait 2.
+openTerminal().
 clearScreen.
 
 global root is ship:rootpart:getmodule("kOSProcessor").
@@ -67,4 +88,4 @@ function getRoot {
 }
 
 loadModule("log.ks").
-logPrint("bootstrap v0.2.3 loaded").
+fileVersion("0.2.3").

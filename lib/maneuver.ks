@@ -118,4 +118,4 @@ function multiStagesBurntime {
     return ret.
 }
 
-logPrint("maneuver v0.1.0 loaded").
+fileVersion("0.1.0").

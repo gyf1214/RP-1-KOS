@@ -126,4 +126,4 @@ function executeLauncherLocal {
     }
 }
 
-logPrint("launcher v0.1.1 loaded").
+fileVersion("0.1.1").

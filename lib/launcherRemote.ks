@@ -40,4 +40,4 @@ function callLauncher {
     }
 }
 
-logPrint("launcherRemote v0.1.1 loaded").
+fileVersion("0.1.1").

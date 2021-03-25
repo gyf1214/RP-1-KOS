@@ -36,4 +36,4 @@ function doExecutePlan {
     logPrint("finish execute plan config " + cfg).
 }
 
-logPrint("missionPlan v0.1.0 loaded").
+fileVersion("0.1.0").
