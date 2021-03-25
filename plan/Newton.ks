@@ -14,3 +14,12 @@ addPlanConfig ("Newton 7",  callLauncher@:bind("comm2")).
 copyPlanConfig("Newton 8",  "Newton 4").
 copyPlanConfig("Newton 9",  "Newton 5").
 copyPlanConfig("Newton 10", "Newton 4").
+copyPlanConfig("Newton 11", "Newton 4").
+copyPlanConfig("Newton 12", "Newton 5").
+copyPlanConfig("Newton 13", "Newton 7").
+addPlanConfig ("Newton 14", callLauncher@:bind("nav2")).
+copyPlanConfig("Newton 15", "Newton 5").
+copyPlanConfig("Newton 16", "Newton 14").
+copyPlanConfig("Newton 17", "Newton 4").
+copyPlanConfig("Newton 18", "Newton 14").
+copyPlanConfig("Newton 19", "Newton 4").

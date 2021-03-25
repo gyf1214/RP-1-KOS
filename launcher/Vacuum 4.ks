@@ -6,5 +6,6 @@ initLauncher("Vacuum 4", vacuum_launch@:bind(1, 65, 1), lexicon("config", "main"
 addLauncherConfig("main").
 addLauncherConfig("tli").
 addLauncherConfig("comm2", lexicon("offset", 1.1, "azimuth", 142)).
+addLauncherConfig("crew1", lexicon("offset", 1.6)).
 
 logPrint("Vacuum 4 launcher profile v0.2.0 loaded").

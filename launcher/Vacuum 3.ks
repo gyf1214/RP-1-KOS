@@ -10,5 +10,6 @@ addLauncherConfig("wea1", lexicon("offset", 1.6)).
 // addLauncherConfig("comm2", lexicon("offset", 1.1, "azimuth", 136)).
 addLauncherConfig("sample1").
 addLauncherConfig("sample2").
+addLauncherConfig("nav2", lexicon("offset", 1.15, "azimuth", 165)).
 
 logPrint("Vacuum 3 launcher profile v0.2.2 loaded").

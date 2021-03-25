@@ -1,7 +1,9 @@
 global logPath is "root:/log/" + core:tag + ".log".
 global logName is ship:name + " " + time:calendar.
+global isSimulation is false.
 if not kuniverse:canquicksave {
     set logName to "sim".
+    set isSimulation to true.
 }
 
 function openOrCreate {

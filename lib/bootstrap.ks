@@ -12,7 +12,9 @@ openTerminal().
 
 function loadFile {
     parameter path.
-    copyPath("Archive:/" + path, path).
+    if not exists(path) {
+        copyPath("Archive:/" + path, path).
+    }
     runOncePath(path).
 }
 
