@@ -2,18 +2,6 @@
 
 loadModule("missionPlan.ks").
 
-// a = a + b, non-overwrite, deep
-function combineLexicon {
-    parameter a.
-    parameter b.
-
-    for k in b:keys {
-        if not a:haskey(k) {
-            a:add(k, b[k]).
-        }
-    }
-}
-
 function initLauncher {
     parameter name.
     parameter func.

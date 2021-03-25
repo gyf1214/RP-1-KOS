@@ -10,13 +10,18 @@ function openTerminal {
     set terminal:charheight to 10.
 }
 
+function copyFile {
+    parameter path.
+    copyPath("Archive:/" + path, path).
+}
+
 function loadFile {
     parameter path.
     local oldFile is boot:loadFile.
     local oldCopy is boot:copyFile.
     set boot:loadFile to path.
     if not exists(path) {
-        copyPath("Archive:/" + path, path).
+        copyFile(path).
         set boot:copyFile to true.
     } else {
         set boot:copyFile to false.
@@ -32,9 +37,9 @@ function loadModule {
 }
 
 function fileVersion {
-    parameter version.
+    parameter versionStr.
     if boot:copyFile {
-        logPrint("Load File: " + boot:loadFile + ", Version: " + version).
+        logPrint("Load File: " + boot:loadFile + ", Version: " + versionStr).
     }
 }
 
@@ -59,14 +64,45 @@ function bootLauncher {
     shutdown.
 }
 
+function taskReboot {
+    if exists("task.json") {
+        logPrint("system reboot for task").
+        copyLog(false).
+        reboot.
+    } else {
+        logPrint("system shutdown").
+        copyLog(true).
+        shutdown.
+    }
+}
+
 function bootMissionPlan {
-    loadModule("missionPlan.ks").
-    loadFile("plan/" + core:tag + ".ks").
-    doExecutePlan(ship:name).
-    
-    logPrint("system shutdown").
-    copyLog().
-    shutdown.
+    if prelaunch {
+        loadModule("missionPlan.ks").
+        loadFile("plan/" + core:tag + ".ks").
+        doExecutePlan(ship:name).
+        taskReboot().   
+    } else if exists("task.json") {
+        loadModule("task.ks").
+        bootTask().
+        taskReboot().
+    } else {
+        logPrint("user power on, proceeding...").
+        copyLog(false).
+        core:doevent("Open Terminal").
+    }
+}
+
+// a = a + b, non-overwrite, shallow
+function combineLexicon {
+    parameter a.
+    parameter b.
+
+    for k in b:keys {
+        if not a:haskey(k) {
+            a:add(k, b[k]).
+        }
+    }
 }
 
 global boot is lexicon(

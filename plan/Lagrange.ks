@@ -1,7 +1,7 @@
 @lazyGlobal off.
 
 loadModule("launcherRemote.ks").
-logPrint("Lagrange: General Purpose Satellite Platform with control").
 
 initPlan("Lagrange").
+logPrint("Lagrange: General Purpose Satellite Platform with control").
 addPlanConfig ("Lagrange 1",  callLauncher@:bind("tli")).

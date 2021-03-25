@@ -9,12 +9,11 @@ local laika is {
     setRootEC(false).
     callLauncher(cfg, params).
 
-    local capsule is core:part:children[0].
-    reentryControlc(false, 86400, capsule).
+    reentryTaskControl(86400).
 }.
 
-logPrint("Laika: sample return missions").
 initPlan("Laika").
+logPrint("Laika: sample return missions").
 addPlanConfig ("Laika 1",  laika:bind("sample1")).
 addPlanConfig ("Laika 2",  laika:bind("sample2")).
 copyPlanConfig("Laika 3", "Laika 2").

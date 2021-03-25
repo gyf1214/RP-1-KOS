@@ -158,4 +158,36 @@ function getCoreStageInfo {
     return ret.
 }
 
+function getReentryInfo {
+    local retroStage is 0.
+    local separateStage is 0.
+    local parachuteStage is 0.
+    local capsule is ship:rootpart.
+
+    logPrint("find reentry info").
+    for part in ship:parts {
+        if part:istype("engine") {
+            logPrint("retro engine: " + part:name).
+            set retroStage to part:stage.
+        } else if part:istype("decoupler") {
+            logPrint("service module decoupler: " + part:name).
+            set separateStage to part:stage.
+        } else if part:hasModule("RealChuteModule") {
+            logPrint("parachute: " + part:name).
+            set parachuteStage to part:stage.
+        } else if part:decoupledin < 0 and part:hasModule("Harddrive") {
+            logPrint("science capsule: " + part:name).
+            set capsule to part.
+        }
+    }
+    logPrint("retro burn in stage " + retroStage).
+    logPrint("decouple in stage " + separateStage).
+    logPrint("parachute in stage " + parachuteStage).
+
+    return lexicon(
+        "retro", retroStage, "separate", separateStage,
+        "parachute", parachuteStage, "capsule", capsule
+    ).
+}
+
 fileVersion("0.1.4").

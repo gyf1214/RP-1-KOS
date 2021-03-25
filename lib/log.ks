@@ -1,16 +1,13 @@
 @lazyGlobal off.
 
-if not boot:haskey("logPath") {
-    boot:add("logPath", "root:/log/" + core:tag + ".log").
-    boot:add("logName", ship:name + " " + time:calendar).
-    bool:add("isSimulation", false).
-    if not kuniverse:canquicksave {
-        set boot:logName to "sim".
-        set boot:isSimulation to true.
-    }
-    logPrint("current log path is " + boot:logPath).
-    logPrint("current log name is " + boot:logName).
+boot:add("logPath", "root:/log/" + core:tag + ".log").
+boot:add("logName", ship:name + " " + time:calendar).
+boot:add("isSimulation", false).
+if not kuniverse:canquicksave {
+    set boot:logName to "sim".
+    set boot:isSimulation to true.
 }
+logPrint("current log path is " + boot:logPath).
 
 function openOrCreate {
     parameter fpath.
@@ -47,14 +44,19 @@ function reportOrbit {
 }
 
 function copyLog {
-    logPrint("send log back, waiting for connection").
-    wait until homeConnection:isconnected.
-    local targetPath to "Archive:/log/" + boot:logName.
-    if exists(targetPath) {
-        deletePath(targetPath).
+    parameter waitConnect is true.
+    
+    if waitConnect or homeConnection:isconnected {
+        logPrint("send log back, waiting for connection").
+        logPrint("current log name is " + boot:logName).
+        wait until homeConnection:isconnected.
+        local targetPath to "Archive:/log/" + boot:logName.
+        if exists(targetPath) {
+            deletePath(targetPath).
+        }
+        local srcPath is "root:/log".
+        copyPath(srcPath, targetPath).
     }
-    local srcPath is "root:/log".
-    copyPath(srcPath, targetPath).
 }
 
 fileVersion("0.1.2").

@@ -1,9 +1,9 @@
 @lazyGlobal off.
 
 loadModule("launcherRemote.ks").
-logPrint("Newton: First Gen General Purpose Satellite Platform").
 
 initPlan("Newton").
+logPrint("Newton: First Gen General Purpose Satellite Platform").
 addPlanConfig ("Newton 1",  callLauncher@:bind("comm1")).
 addPlanConfig ("Newton 2",  callLauncher@:bind("wea1")).
 copyPlanConfig("Newton 3",  "Newton 2").

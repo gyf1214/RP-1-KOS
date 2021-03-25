@@ -1,6 +1,8 @@
 @lazyGlobal off.
 
 loadModule("nav.ks").
+loadModule("vessel.ks").
+loadModule("task.ks").
 
 function setRootEC {
     parameter enabled.
@@ -20,24 +22,34 @@ function transferScience {
     }
 }
 
+function reentryTaskControl {
+    parameter stayTime is 0.
+
+    local inOrbit is ship:orbit:periapsis > 140000.
+    if not inOrbit {
+        logPrint("warning: not in orbit, wait until reentry").
+        wait until ship:altitude < 140000.
+        reentryControl().
+    } else {
+        set stayTime to eta:apoapsis + ceiling(stayTime / ship:orbit:period) * ship:orbit:period.
+        if stayTime > 15 {
+            setTask(time:seconds + stayTime, "reentry").
+        } else {
+            logPrint("waiting for reentry, eta: " + stayTime).
+            wait stayTime.
+            reentryControl().
+        }
+    }
+}
+
 function reentryControl {
-    parameter serviceRetro.
-    parameter stayTime.
-    parameter capsule is core:part.
     parameter controlAlt is 100000.
     parameter parachuteAlt is 7000.
 
     local inOrbit is ship:orbit:periapsis > 140000.
-    if not inOrbit {
-        wait until ship:altitude < 140000.
-    } else {
-        set stayTime to eta:apoapsis + ceiling(stayTime / ship:orbit:period) * ship:orbit:period.
-        logPrint("staying, eta: " + stayTime).
-        if addons:available("KAC") {
-            addAlarm("Raw", time:seconds + stayTime, ship:name + " Return", "").
-        }
-        wait stayTime.
-    }
+    local reentryInfo is getReentryInfo().
+    local capsule is reentryInfo:capsule.
+    local serviceRetro is reentryInfo:retro > reentryInfo:separate.
 
     setRootEC(true).
     transferScience(capsule).
@@ -53,24 +65,31 @@ function reentryControl {
     }
     logPrint("start reentry control").
     rcs on.
-    lock steering to dirZZ(ship:facing, ship:srfretrograde:forevector).
-    wait 1.
-    wait until shipStable(ship:srfretrograde:forevector).
     if inOrbit {
+        local retroDir is ship:retrograde:forevector.
+        lock steering to dirZZ(ship:facing, retroDir).
+        wait 1.
+        wait until shipStable(retroDir).
         logPrint("ignite reentry engine").
         wait 1.
         stage.
     }
+    lock steering to dirZZ(ship:facing, ship:srfretrograde:forevector).
     wait until ship:altitude < controlAlt.
     if serviceRetro {
         separateService().
     }
-    
-    if stage:number > 0 {
-        logPrint("deploy extra stages").
-        until stage:number <= 1 {
-            wait 1.
-            stage.
+
+    if stage:number > reentryInfo:parachute {
+        if stage:number > reentryInfo:parachute + 1 {
+            logPrint("deploy extra stages").
+            until stage:number <= reentryInfo:parachute + 1 {
+                wait 1.
+                stage.
+            }
+        }
+        when homeConnection:isconnected then {
+            copyLog(false).
         }
         wait until ship:altitude < parachuteAlt.
         logPrint("deploy parachute").
@@ -80,3 +99,5 @@ function reentryControl {
     logPrint("end reentry control").
     unlock steering.
 }
+
+fileVersion("0.1.0").

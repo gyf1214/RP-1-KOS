@@ -1,1 +1,3 @@
-shutdown.
+if ship:status = "PRELAUNCH" {
+    shutdown.
+}

@@ -2,7 +2,6 @@
 
 loadModule("launchOneStage.ks").
 loadModule("missionPlan.ks").
-logPrint("TinyVee X mission plans").
 
 local tinyveeX is {
     parameter offset is 2.5.
@@ -24,6 +23,7 @@ local tinyveeX is {
 }.
 
 initPlan("TinyVee X").
+logPrint("TinyVee X: suborbit rocketplane missions").
 addPlanConfig("TinyVee X-2", tinyveeX:bind(2.5, 90)).
 addPlanConfig("TinyVee X-3", tinyveeX:bind(1, 0)).
 addPlanConfig("TinyVee X-4", tinyveeX:bind(1.8, 90)).

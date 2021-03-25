@@ -9,9 +9,9 @@ local tsiol is {
     
     setRootEC(false).
     callLauncher(cfg, params).
-    reentryControl(true, 6 * 86400).
+    reentryTaskControl(6 * 86400).
 }.
 
-logPrint("Tsiolkovsky: first crewed missions").
 initPlan("Tsiolkovsky").
+logPrint("Tsiolkovsky: first crewed missions").
 addPlanConfig("Tsiolkovsky 1", tsiol:bind("crew1")).

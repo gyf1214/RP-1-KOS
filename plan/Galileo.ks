@@ -1,9 +1,9 @@
 @lazyGlobal off.
 
 loadModule("launcherRemote.ks").
-logPrint("Galileo: First Satellite").
 
 initPlan("Galileo").
+logPrint("Galileo: First Satellite").
 addPlanConfig ("Galileo 1",  callLauncher@:bind("main")).
 addPlanConfig ("Galileo 2",  callLauncher@:bind("polar")).
 addPlanConfig ("Galileo 3",  callLauncher@:bind("main", lexicon("offset", 1.9))).
