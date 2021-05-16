@@ -23,3 +23,6 @@ copyPlanConfig("Newton 16", "Newton 14").
 copyPlanConfig("Newton 17", "Newton 4").
 copyPlanConfig("Newton 18", "Newton 14").
 copyPlanConfig("Newton 19", "Newton 4").
+copyPlanConfig("Newton 20", "Newton 14").
+copyPlanConfig("Newton 21", "Newton 7").
+copyPlanConfig("Newton 22", "Newton 14").
