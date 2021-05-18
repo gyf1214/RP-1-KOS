@@ -31,7 +31,7 @@ function addLauncherConfig {
     parameter name.
     parameter param is lexicon().
 
-    logPrint("add launcher config " + name).
+    // logPrint("add launcher config " + name).
     if param:istype("KOSDelegate") {
         addPlanConfig(name, {
             parameter param1 is lexicon().

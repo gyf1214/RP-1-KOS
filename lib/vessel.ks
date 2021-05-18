@@ -31,22 +31,22 @@ function getFinalStageInfo {
             if part:istype("engine") and part:stage = stagenum {
                 set thrust to thrust + part:possiblethrustat(0).
                 set isp to part:visp.
-                set wetmass to wetmass + part:wetmass.
+                set wetmass to wetmass + part:mass.
                 set drymass to drymass + part:drymass.
-                logPrint("engine: " + part:name).
+                // logPrint("engine: " + part:name).
             } else if part:istype("engine") and part:stage > stagenum {
                 set wetmass to wetmass + part:drymass.
                 set drymass to drymass + part:drymass.
                 set hasMotor to true.
-                logPrint("spin motor: " + part:name).
+                // logPrint("spin motor: " + part:name).
             } else if truestage = stagenum - 1 {
-                set wetmass to wetmass + part:wetmass.
+                set wetmass to wetmass + part:mass.
                 set drymass to drymass + part:drymass.
-                logPrint("stage mass: " + part:name).
+                // logPrint("stage mass: " + part:name).
             } else {
-                set wetmass to wetmass + part:wetmass.
-                set drymass to drymass + part:wetmass.
-                logPrint("dead mass: " + part:name).
+                set wetmass to wetmass + part:mass.
+                set drymass to drymass + part:mass.
+                // logPrint("dead mass: " + part:name).
             }
         }
     }

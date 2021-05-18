@@ -13,14 +13,14 @@ function addPlanConfig {
     parameter name.
     parameter func.
     plan:config:add(name, func).
-    logPrint("add plan config " + name).
+    // logPrint("add plan config " + name).
 }
 
 function copyPlanConfig {
     parameter name.
     parameter name1.
     plan:config:add(name, plan:config[name1]).
-    logPrint("add plan config " + name).
+    // logPrint("add plan config " + name).
 }
 
 function doExecutePlan {
