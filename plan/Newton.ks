@@ -26,3 +26,4 @@ copyPlanConfig("Newton 19", "Newton 4").
 copyPlanConfig("Newton 20", "Newton 14").
 copyPlanConfig("Newton 21", "Newton 7").
 copyPlanConfig("Newton 22", "Newton 14").
+addPlanConfig ("Newton 23", callLauncher@:bind("scan1")).

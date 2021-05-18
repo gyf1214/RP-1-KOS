@@ -16,8 +16,12 @@ function vacuum_circularize {
         targetOrbitAPPE(stages, 4500000, 800000).
     } else if params:config = "comm2" {
         targetOrbitAPPE(stages, 5000000, 1000000).
-    } else if params:config = "wea1" {
+    } else if params:config = "comcons1" {
+        targetOrbitAPPE(stages, 7000000, 300000).
+    } else if params:config = "wea1" or params:config = "scan1" {
         targetOrbitEcc(stages, 0.004, 300000).
+    } else if params:config = "wea2" {
+        targetOrbitEcc(stages, 0.004, 1000000).
     } else if params:config = "nav2" {
         targetOrbitEcc(stages, 0.004, 800000).
     } else if params:config = "tli" {
