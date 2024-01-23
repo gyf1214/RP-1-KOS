@@ -36,6 +36,7 @@ function doLaunchNStages {
 
 function finalNStages {
     parameter stages is list().
+    parameter liveProg is false.
     parameter finalTime is 0.
     parameter stopCondition is {
         parameter stopTime.
@@ -46,8 +47,16 @@ function finalNStages {
     logPrint("lock to maneuver direction").
     set ship:control:pilotmainthrottle to 0.0.
     rcs on.
-    local prograd is orbitVelAtTA(180):normalized.
-    lock steering to dirZZ(ship:facing, prograd).
+
+    if not liveProg:istype("delegate") {
+        local prograd is orbitVelAtTA(180):normalized.
+        if liveProg:istype("vector") {
+            set prograd to liveProg.
+        }
+        set liveProg to { return prograd. }.
+    }
+
+    lock steering to liveProg().
 
     local totalTime is 0.
     local N is 0.
@@ -82,7 +91,7 @@ function finalNStages {
 
     logPrint("wait until burn time, ETA " + waitTime).
     if waitTime > 0 {
-        warpWait(waitTime, prograd).
+        warpWait(waitTime, liveProg).
     }
 
     local stopTime is 0.
@@ -138,7 +147,7 @@ function targetOrbitAlt {
         return ship:orbit:semimajoraxis >= R + (curAP + targetAlt) / 2.
     }.
 
-    finalNStages(stages, finalTime, stopCondition).
+    finalNStages(stages, false, finalTime, stopCondition).
 }
 
 function targetOrbitEcc {

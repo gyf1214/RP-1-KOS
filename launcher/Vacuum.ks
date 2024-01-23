@@ -26,6 +26,11 @@ function vacuum_circularize {
         targetOrbitEcc(stages, 0.004, 800000).
     } else if params:config = "tli" {
         targetOrbitAlt(stages, 350000000).
+    } else if params:config = "geo1" {
+        // finalNStages(stages, {
+        //     return angleAxis(90, orbitAngNorm()) * orbitPos():normalized.
+        // }).        
+        finalNStages(stages).
     } else if params:config = "sample1" {
         targetOrbitAlt(stages, 90000).
     } else if params:config = "sample2" or params:config = "crew1" {

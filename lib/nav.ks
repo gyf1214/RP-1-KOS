@@ -35,13 +35,18 @@ function warpWait {
     parameter desiredFore is ship:facing:forevector.
     parameter graceTime is 15.
 
+    if not desiredFore:istype("delegate") {
+        local fore1 is desiredFore.
+        set desiredFore to { return fore1. }.
+    }
+
     logPrint("warp wait: " + waitTime + "s").
     local now is time:seconds.
     local stopTime is now + waitTime.
     local preStopTime is stopTime - graceTime.
     set kuniverse:timewarp:mode to "PHYSICS".
     set kuniverse:timewarp:rate to 2.
-    wait until time:seconds >= preStopTime or (shipStable(desiredFore) and ship:altitude > 140000).
+    wait until time:seconds >= preStopTime or (shipStable(desiredFore()) and ship:altitude > 140000).
     set kuniverse:timewarp:mode to "RAILS".
     set kuniverse:timewarp:rate to 1.
     if time:seconds < preStopTime {
